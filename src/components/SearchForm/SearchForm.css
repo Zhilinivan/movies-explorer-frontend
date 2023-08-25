@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: space-between;
   margin: 0 70px 0;
-  padding: 81px 0 43px;
+  padding: 70px 0 40px;
 }
 
 .search__container {
@@ -54,7 +54,6 @@
 
 .search__toggle {
   display: flex;
-
   align-items: center;
   margin: 0 0 40px;
 }
@@ -71,8 +70,13 @@
   position: relative;
   display: inline-block;
   width: 36px;
-  height: 20px;
+  height: 14px;
   filter: drop-shadow(0 2px 2px #e5e5e8);
+  transition: opacity 0.2s linear;
+}
+
+.search__tumbler:hover {
+  opacity: 0.6;
   cursor: pointer;
 }
 
@@ -92,16 +96,16 @@
 .search__slider::before {
   position: absolute;
   content: "";
-  height: 16px;
-  width: 16px;
-  left: 1px;
-  bottom: 1px;
+  height: 10px;
+  width: 10px;
+  left: 2px;
+  bottom: 2px;
   border-radius: 50%;
   background-color: white;
 }
 
 .search__checkbox:checked + .search__slider::before {
-  transform: translateX(16px);
+  transform: translateX(22px);
 }
 
 @media screen and (max-width: 800px) {
@@ -146,6 +150,7 @@
 
   .search__toggle {
     margin: 0 0 26px;
+    justify-content: center;
   }
 
   .search__films {

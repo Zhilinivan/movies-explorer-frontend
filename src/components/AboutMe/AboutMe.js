@@ -1,5 +1,5 @@
-import './AboutMe.css';
-import avatar from '../../images/avatar.jpg';
+import "./AboutMe.css";
+import avatar from "../../images/avatar.jpg";
 
 const AboutMe = () => {
   return (
@@ -11,18 +11,30 @@ const AboutMe = () => {
           <h3 className="about-me__name">Иван</h3>
           <p className="about-me__job">Фронтенд-разработчик, 38 лет</p>
           <p className="about-me__description">
-            Я&nbsp;родился и&nbsp;живу в&nbsp;Саратове, закончил факультет экономики СГУ. У&nbsp;меня есть жена
-            и&nbsp;дочь. Я&nbsp;люблю слушать музыку, а&nbsp;ещё увлекаюсь бегом. Недавно начал кодить. С&nbsp;2015 года
-            работал в&nbsp;компании &laquo;СКБ Контур&raquo;. После того, как прошёл курс по веб&#8209;разработке, начал
-            заниматься фриланс-&raquo;заказами и&nbsp;ушёл с&nbsp;постоянной работы.
+            Я&nbsp;родился и&nbsp;живу в&nbsp;Саратове, закончил факультет
+            экономики СГУ. У&nbsp;меня есть жена и&nbsp;дочь. Я&nbsp;люблю
+            слушать музыку, а&nbsp;ещё увлекаюсь бегом. Недавно начал кодить.
+            С&nbsp;2015 года работал в&nbsp;компании &laquo;СКБ Контур&raquo;.
+            После того, как прошёл курс по веб&#8209;разработке, начал
+            заниматься фриланс-&raquo;заказами и&nbsp;ушёл с&nbsp;постоянной
+            работы.
           </p>
 
           <ul className="about-me__links">
-            <li><a className="about-me__link" href="https://github.com/Zhilinivan" target="_blank" rel="noreferrer">Github</a></li>
+            <li>
+              <a
+                className="about-me__link"
+                href="https://github.com/Zhilinivan"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Github
+              </a>
+            </li>
           </ul>
         </div>
 
-        <img src={avatar} alt="about-me" className="about-me__image" />
+        <img src={avatar} alt="Моя аватарка" className="about-me__image" />
       </div>
     </section>
   );
