@@ -32,10 +32,6 @@ function App() {
   const { pathname } = useLocation();
   const history = useNavigate();
 
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
   function getUserInfo() {
     MainApi.getUserInfo()
       .then((data) => {
@@ -43,12 +39,16 @@ function App() {
         setLoggedIn(true);
       })
       .catch((err) => {
-        console.log(`Что-то пошло не так! Ошибка сервера ${err}`);
+        console.log(`Что-то пошло не так! Ошибка сервера`);
       })
       .finally(() => {
         setIsLoading(false);
       });
   }
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   function onRegister(formData) {
     MainApi.registerUser(formData)
@@ -60,6 +60,7 @@ function App() {
         }
       })
       .catch((err) => {
+        console.log(err);
         setPopupTitle("Что-то пошло не так! Ошибка регистрации.");
         setIsOpenPopup(true);
       });
@@ -67,16 +68,17 @@ function App() {
 
   function onLogin(formData) {
     MainApi.loginUser(formData)
-      .then(({ token }) => {
-        if (token) {
-          Token.saveToken(token);
+      .then((res) => {
+        if (res.token) {
+          Token.saveToken(res.token);
           MainApi.updateToken();
           setLoggedIn(true);
           getUserInfo();
-          history.push("/movies");
+          history("/movies");
         }
       })
       .catch((err) => {
+        console.log(err);
         setPopupTitle("Что-то пошло не так! Ошибка авторизации.");
         setIsOpenPopup(true);
       });

@@ -64,32 +64,34 @@ const SavedMovies = ({ openPopup }) => {
     }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(async () => {
-    const localStorageFilms = localStorage.getItem("savedFilms");
-    if (localStorageFilms) {
-      setFilms(JSON.parse(localStorageFilms));
-      const localStorageFilmsTumbler =
-        localStorage.getItem("savedFilmsTumbler");
-      const localStorageFilmsInputSearch = localStorage.getItem(
-        "savedFilmsInputSearch"
-      );
+  useEffect(() => {
+    async function formData() {
+      const localStorageFilms = localStorage.getItem("savedFilms");
+      if (localStorageFilms) {
+        setFilms(JSON.parse(localStorageFilms));
+        const localStorageFilmsTumbler =
+          localStorage.getItem("savedFilmsTumbler");
+        const localStorageFilmsInputSearch = localStorage.getItem(
+          "savedFilmsInputSearch"
+        );
 
-      if (localStorageFilmsTumbler) {
-        setFilmsTumbler(localStorageFilmsTumbler === "true");
-      }
-      if (localStorageFilmsInputSearch) {
-        setFilmsInputSearch(localStorageFilmsInputSearch);
-      }
-    } else {
-      try {
-        const data = await mainApi.getMovies();
-        setFilms(data);
-        setFilmsShowed(data);
-      } catch (err) {
-        openPopup(`Ошибка сервера ${err}`);
+        if (localStorageFilmsTumbler) {
+          setFilmsTumbler(localStorageFilmsTumbler === "true");
+        }
+        if (localStorageFilmsInputSearch) {
+          setFilmsInputSearch(localStorageFilmsInputSearch);
+        }
+      } else {
+        try {
+          const data = await mainApi.getMovies();
+          setFilms(data);
+          setFilmsShowed(data);
+        } catch (err) {
+          openPopup(`Ошибка сервера ${err}`);
+        }
       }
     }
+    formData();
   }, [openPopup]);
 
   return (

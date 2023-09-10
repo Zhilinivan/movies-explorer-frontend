@@ -9,7 +9,7 @@ const MoviesCard = ({ film, savedMoviesToggle, filmsSaved }) => {
   function handleFavoriteToogle() {
     const newFavorite = !favorite;
     const savedFilm = filmsSaved.filter((obj) => {
-      return obj.movieId == film.id;
+      return obj.movieId === film.id;
     });
     savedMoviesToggle(
       { ...film, _id: savedFilm.length > 0 ? savedFilm[0]._id : null },
@@ -28,7 +28,7 @@ const MoviesCard = ({ film, savedMoviesToggle, filmsSaved }) => {
   useEffect(() => {
     if (pathname !== "/saved-movies") {
       const savedFilm = filmsSaved.filter((obj) => {
-        return obj.movieId == film.id;
+        return obj.movieId === film.id;
       });
 
       if (savedFilm.length > 0) {

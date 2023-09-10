@@ -124,7 +124,7 @@ const Movies = ({ openPopup }) => {
     if (favorite) {
       const objFilm = {
         image: "https://api.nomoreparties.co" + film.image.url,
-        trailer: film.trailerLink,
+        trailerLink: film.trailerLink,
         thumbnail: "https://api.nomoreparties.co" + film.image.url,
         movieId: film.id,
         country: film.country || "Неизвестно",
