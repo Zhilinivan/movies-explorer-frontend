@@ -30,7 +30,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { pathname } = useLocation();
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   function getUserInfo() {
     MainApi.getUserInfo()
@@ -73,8 +73,8 @@ function App() {
           Token.saveToken(res.token);
           MainApi.updateToken();
           setLoggedIn(true);
-          getUserInfo();
-          history("/movies");
+
+          navigate("/movies");
         }
       })
       .catch((err) => {
@@ -98,11 +98,9 @@ function App() {
     Token.removeToken();
     setLoggedIn(false);
     localStorage.removeItem("films");
-    localStorage.removeItem("filmsTumbler");
-    localStorage.removeItem("filmsInputSearch");
-    localStorage.removeItem("savedFilms");
-    localStorage.removeItem("savedFilmsTumbler");
-    localStorage.removeItem("savedFilmsInputSearch");
+    localStorage.removeItem("searchFilms");
+    localStorage.removeItem("tumbler");
+    localStorage.removeItem("inputSearch");
   }
 
   return (

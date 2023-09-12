@@ -28,7 +28,7 @@ const MoviesCardList = ({
         <div className="cards__text">Ничего не найдено</div>
       )}
 
-      {filmsRemains.length > 0 && pathname !== "/saved-movies" && (
+      {filmsRemains.length > films.length && pathname !== "/saved-movies" && (
         <div className="cards__button-container">
           <button
             className="cards__button"

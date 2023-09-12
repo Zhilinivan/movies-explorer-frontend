@@ -36,8 +36,11 @@ const HeaderNav = () => {
               <li className="header-nav__list-item">
                 <NavLink
                   to="/movies"
-                  className="header-nav__link"
-                  activeсlassname="header-nav__link_active"
+                  className={({ isActive }) =>
+                    `header-nav__link${
+                      (isActive && "header-nav__link-active") || ""
+                    }`
+                  }
                 >
                   Фильмы
                 </NavLink>
@@ -45,10 +48,13 @@ const HeaderNav = () => {
               <li className="header-nav__list-item">
                 <NavLink
                   to="/saved-movies"
-                  className="header-nav__link"
-                  activeсlassname="header-nav__link_active"
+                  className={({ isActive }) =>
+                    `header-nav__link${
+                      (isActive && "header-nav__link-active") || ""
+                    }`
+                  }
                 >
-                  Сохранённые фильмы
+                  Сохраненные фильмы
                 </NavLink>
               </li>
             </ul>
@@ -56,7 +62,6 @@ const HeaderNav = () => {
           <NavLink
             to="/profile"
             className="header-nav__link header-nav__link_profile"
-            activeсlassname="header-nav__link_active"
           >
             <p>Аккаунт</p>
             <img src={account} alt="Аккаунт"></img>
