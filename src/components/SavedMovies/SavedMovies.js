@@ -13,19 +13,31 @@ const SavedMovies = ({ openPopup }) => {
   const [inputSearch, setInputSearch] = useState("");
   const [filmsShowed, setFilmsShowed] = useState([]);
 
+  useEffect(() => {
+    async function formData() {
+      try {
+        const data = await mainApi.getMovies();
+        setFilmsSaved(data);
+        setFilmsShowed(data);
+      } catch (err) {
+        openPopup(`Ошибка сервера ${err}`);
+      }
+    }
+    formData();
+  }, [openPopup]);
+
   async function handleGetMovies(inputSearch, tumbler) {
     setErrorText("");
     setPreloader(true);
 
     try {
-      let filterData = filmsSaved.filter(({ nameRU }) =>
-        nameRU.toLowerCase().includes(inputSearch.toLowerCase())
-      );
+      let searchFilms = filmsSaved
+        .filter(({ nameRU }) =>
+          nameRU.toLowerCase().includes(inputSearch.toLowerCase())
+        )
+        .filter(({ duration }) => (tumbler ? duration <= 40 : true));
 
-      if (tumbler)
-        filterData = filterData.filter(({ duration }) => duration <= 40);
-
-      setFilmsShowed(filterData);
+      setFilmsShowed(searchFilms);
     } catch (err) {
       setErrorText(
         "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз"
@@ -38,10 +50,11 @@ const SavedMovies = ({ openPopup }) => {
   async function savedMoviesToggle(film, favorite) {
     if (!favorite) {
       try {
-        await mainApi.deleteMovies(film._id);
-        const newFilms = await mainApi.getMovies();
-        setFilmsShowed(newFilms);
-        setFilmsSaved(newFilms);
+        await mainApi.deleteMovies(film.movieId);
+        setFilmsSaved((prev) => prev.filter((f) => f.movieId !== film.movieId));
+        setFilmsShowed((prev) =>
+          prev.filter((f) => f.movieId !== film.movieId)
+        );
       } catch (err) {
         openPopup("Во время удаления фильма произошла ошибка.");
       }
@@ -60,19 +73,6 @@ const SavedMovies = ({ openPopup }) => {
   function inputChange(evt) {
     setInputSearch(evt.target.value);
   }
-
-  useEffect(() => {
-    async function formData() {
-      try {
-        const data = await mainApi.getMovies();
-        setFilmsSaved(data);
-        setFilmsShowed(data);
-      } catch (err) {
-        openPopup(`Ошибка сервера ${err}`);
-      }
-    }
-    formData();
-  }, [openPopup]);
 
   return (
     <div className="saved-movies">

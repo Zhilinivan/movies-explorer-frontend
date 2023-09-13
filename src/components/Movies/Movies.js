@@ -7,14 +7,18 @@ import mainApi from "../../utils/MainApi";
 import moviesApi from "../../utils/MoviesApi";
 
 const Movies = ({ openPopup }) => {
-  const [searchFilms, setSearchFilms] = useState(null);
-  const [filmsSaved, setFilmsSaved] = useState([]);
   const [preloader, setPreloader] = useState(false);
   const [errorText, setErrorText] = useState("");
+
+  const [films, setFilms] = useState(null);
+  const [searchFilms, setSearchFilms] = useState(null);
+  const [filmsSaved, setFilmsSaved] = useState([]);
+
+  const [filmsShowed, setFilmsShowed] = useState([]);
+
   const [tumbler, setTumbler] = useState(false);
   const [inputSearch, setInputSearch] = useState("");
   const [moviesCount, setMoviesCount] = useState([]);
-  const [filmsShowed, setFilmsShowed] = useState([]);
 
   useEffect(() => {
     setMoviesCount(getMoviesCount());
@@ -27,26 +31,48 @@ const Movies = ({ openPopup }) => {
   }, []);
 
   useEffect(() => {
-    mainApi
-      .getMovies()
-      .then((data) => {
+    async function formData() {
+      try {
+        const data = await mainApi.getMovies();
         setFilmsSaved(data);
-      })
-      .catch((err) => {
+      } catch (err) {
         openPopup(`Ошибка сервера ${err}`);
-      });
+      }
+    }
+    formData();
   }, [openPopup]);
 
   useEffect(() => {
-    const startFilms = JSON.parse(localStorage.getItem("searchFilms"));
-    const startInput = localStorage.getItem("inputSearch");
-    const startTumbler = localStorage.getItem("tumbler") === "true";
+    async function getFilms() {
+      setErrorText("");
+      setPreloader(true);
 
-    setSearchFilms(startFilms);
-    setInputSearch(startInput);
+      try {
+        const data = await moviesApi.getMovies();
 
-    setTumbler(startTumbler);
-    setFilmsShowed(startFilms?.slice(0, getMoviesCount()[0]) || []);
+        setFilms(data);
+      } catch (err) {
+        setErrorText(
+          "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз"
+        );
+      } finally {
+        setPreloader(false);
+      }
+    }
+
+    getFilms();
+  }, []);
+
+  useEffect(() => {
+    const searchFilms = JSON.parse(localStorage.getItem("searchFilms"));
+    const inputSearch = localStorage.getItem("inputSearch");
+    const tumbler = localStorage.getItem("tumbler") === "true";
+
+    setSearchFilms(searchFilms);
+    setInputSearch(inputSearch);
+
+    setTumbler(tumbler);
+    setFilmsShowed(searchFilms?.slice(0, getMoviesCount()[0]) || []);
   }, []);
 
   function getMoviesCount() {
@@ -86,37 +112,19 @@ const Movies = ({ openPopup }) => {
       return false;
     }
 
-    setErrorText("");
-    setPreloader(true);
-
-    try {
-      const data = await moviesApi.getMovies();
-
-      let filterData = data.filter(({ nameRU }) =>
+    let searchFilms = films
+      .filter(({ nameRU }) =>
         nameRU.toLowerCase().includes(inputSearch.toLowerCase())
-      );
+      )
+      .filter(({ duration }) => (tumbler ? duration <= 40 : true));
 
-      if (tumbler) {
-        filterData = filterData.filter(({ duration }) => duration <= 40);
-      }
-      setSearchFilms(filterData);
-      localStorage.setItem("searchFilms", JSON.stringify(filterData));
+    setSearchFilms(searchFilms);
 
-      localStorage.setItem("inputSearch", inputSearch);
-      localStorage.setItem("tumbler", tumbler);
+    localStorage.setItem("searchFilms", JSON.stringify(searchFilms));
+    localStorage.setItem("inputSearch", inputSearch);
+    localStorage.setItem("tumbler", tumbler);
 
-      setFilmsShowed(filterData.slice(0, moviesCount[0]));
-    } catch (err) {
-      setErrorText(
-        "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз"
-      );
-
-      localStorage.removeItem("searchFilms");
-      localStorage.removeItem("tumbler");
-      localStorage.removeItem("inputSearch");
-    } finally {
-      setPreloader(false);
-    }
+    setFilmsShowed(searchFilms.slice(0, moviesCount[0]));
   }
 
   async function savedMoviesToggle(film, favorite) {
@@ -130,16 +138,14 @@ const Movies = ({ openPopup }) => {
       };
       try {
         await mainApi.addMovies(objFilm);
-        const newSaved = await mainApi.getMovies();
-        setFilmsSaved(newSaved);
+        setFilmsSaved((prev) => [...prev, objFilm]);
       } catch (err) {
         openPopup("Во время добавления фильма произошла ошибка.");
       }
     } else {
       try {
-        await mainApi.deleteMovies(film._id);
-        const newSaved = await mainApi.getMovies();
-        setFilmsSaved(newSaved);
+        await mainApi.deleteMovies(film.id);
+        setFilmsSaved((prev) => prev.filter((f) => f.movieId !== film.id));
       } catch (err) {
         openPopup("Во время удаления фильма произошла ошибка.");
       }
